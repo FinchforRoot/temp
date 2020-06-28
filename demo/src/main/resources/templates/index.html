@@ -1,10 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>aaa</title>
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/layui/css/layui.css}"></script>
+    <script th:src="@{/layui/layui.all.js}"></script>
+    <script th:src="@{/modular/index.js}"></script>
 </head>
 <body>
+<button type="button" class="layui-btn" id="ks" onclick="keshi.cl()">科室信息</button>
+<button type="button" class="layui-btn" id="br" onclick="patient.cl()">病人信息</button>
+<button type="button" class="layui-btn" id="doc" onclick="doctor.cl()">医生信息</button>
+<button type="button" class="layui-btn" id="room" onclick="door.cl()">病房信息</button>
+<table id="door"></table>
+<table id="patient"></table>
+<table id="doctor"></table>
+<table id="keshi"></table>
 
 </body>
 </html>

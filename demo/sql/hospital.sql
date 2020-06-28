@@ -96,7 +96,7 @@ INSERT INTO `door` VALUES (19, 1018, '某某2号楼一层1018');
 INSERT INTO `door` VALUES (20, 1019, '某某2号楼一层1019');
 
 -- ----------------------------
--- Table structure for keshi
+-- Table structure for Keshi
 -- ----------------------------
 DROP TABLE IF EXISTS `keshi`;
 CREATE TABLE `keshi`  (
@@ -110,7 +110,7 @@ CREATE TABLE `keshi`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of keshi
+-- Records of Keshi
 -- ----------------------------
 INSERT INTO `keshi` VALUES (1, 1, '02911111110', '心内科', '急诊部1号楼一层1000');
 INSERT INTO `keshi` VALUES (2, 2, '02911111111', '口腔科', '急诊部1号楼一层1001');

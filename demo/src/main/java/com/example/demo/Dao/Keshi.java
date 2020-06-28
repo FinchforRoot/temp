@@ -5,17 +5,17 @@ package com.example.demo.Dao;
  * @Description
  * @date 2020/6/28 17:19
  */
-public class keshi {
+public class Keshi {
     private int id;
     private int ksnum;
     private String telephone;
     private String name;
     private String address;
 
-    public keshi() {
+    public Keshi() {
     }
 
-    public keshi(int id, int ksnum, String telephone, String name, String address) {
+    public Keshi(int id, int ksnum, String telephone, String name, String address) {
         this.id = id;
         this.ksnum = ksnum;
         this.telephone = telephone;
@@ -65,7 +65,7 @@ public class keshi {
 
     @Override
     public String toString() {
-        return "keshi{" +
+        return "Keshi{" +
                 "id=" + id +
                 ", ksnum=" + ksnum +
                 ", telephone='" + telephone + '\'' +
