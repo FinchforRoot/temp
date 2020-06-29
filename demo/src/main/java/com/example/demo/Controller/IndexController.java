@@ -28,9 +28,24 @@ import java.util.Map;
 @RequestMapping("/")
 public class IndexController {
 
-    @RequestMapping("/aaa")
-    public String index(){
-        return "index";
+    @RequestMapping("/ks")
+    public String ks(){
+        return "keshi";
+    }
+
+    @RequestMapping("/bf")
+    public String bf(){
+        return "door";
+    }
+
+    @RequestMapping("/ys")
+    public String ys(){
+        return "doctor";
+    }
+
+    @RequestMapping("/hz")
+    public String hz(){
+        return "patient";
     }
 
     @GetMapping("/keshi")
@@ -51,7 +66,7 @@ public class IndexController {
             keshi.setTelephone(rs.getString("telephone"));
             lists.add(keshi);
         }
-        m.put("code",200);
+        m.put("code",0);
         m.put("data",lists);
         return m;
     }
@@ -77,7 +92,7 @@ public class IndexController {
             doctor.setName(rs.getString("name"));
             lists.add(doctor);
         }
-        m.put("code",200);
+        m.put("code",0);
         m.put("data",lists);
         return m;
     }
@@ -98,7 +113,7 @@ public class IndexController {
             door.setRoomnum(rs.getInt("roomnum"));
             lists.add(door);
         }
-        m.put("code",200);
+        m.put("code",0);
         m.put("data",lists);
         return m;
     }
@@ -125,7 +140,7 @@ public class IndexController {
             p.setRecord(rs.getString("record"));
             lists.add(p);
         }
-        m.put("code",200);
+        m.put("code",0);
         m.put("data",lists);
         return m;
     }

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script th:src="@{/js/jquery.js}"></script>
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet" type="text/css">
+    <script th:src="@{/layui/layui.all.js}"></script>
+    <script th:src="@{/modular/index.js}"></script>
+</head>
+<body>
+<button type="button" class="layui-btn layui-btn-normal" id="ks" onclick="keshi.cl()">科室信息</button>
+
+<table id="keshi" lay-filter="keshi"></table>
+
+</body>
+</html>
