@@ -28,10 +28,14 @@ var keshi = {
     layerIndex: -1
 };
 
+door.update = function (){
+    console.log("更新")
+}
+
 door.cl = function () {
     table.render({
         elem: '#door'
-        , height: 420
+        , height: 600
         , url: "/door"
         , title: '病房信息表'
         ,toolbar:'default'
@@ -47,7 +51,7 @@ door.cl = function () {
 keshi.cl = function () {
     table.render({
         elem: '#keshi'
-        , height: 420
+        , height: 600
         , url: "/keshi"
         , title: '科室信息表'
         ,toolbar:'default'
@@ -65,7 +69,7 @@ keshi.cl = function () {
 patient.cl = function () {
     table.render({
         elem: '#patient'
-        , height: 420
+        , height: 600
         , url: "/patient"
         , title: '患者信息表'
         ,toolbar:'default'
@@ -87,7 +91,7 @@ patient.cl = function () {
 doctor.cl = function () {
     table.render({
         elem: '#doctor'
-        , height: 420
+        , height: 600
         , url: "/doctor"
         , title: '医生信息表'
         ,toolbar:'default'
@@ -118,7 +122,12 @@ table.on('toolbar(door)', function(obj){
             } else if(data.length > 1){
                 layer.msg('只能同时编辑一个');
             } else {
-                layer.alert('编辑 [id]：'+ checkStatus.data[0].id);
+                layer.open({
+                    type:1,
+                    title: '病房更新',
+                    area:['800px', '420px'],
+                    content:"<label>id</label><input type='text' id='id' value='"+checkStatus.data[0].id+"'><br><label>roomnum</label><input type='text' id='roomnum' value='"+checkStatus.data[0].roomnum+"'><br><label>address</label><input type='text' id='address' value='"+checkStatus.data[0].address+"'><br><button id='update' onclick='door.update()'>更新</button>",
+                });
             }
             break;
         case 'delete':
