@@ -2,14 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>病房信息</title>
     <script th:src="@{/js/jquery.js}"></script>
     <link th:href="@{/layui/css/layui.css}" rel="stylesheet" type="text/css">
     <script th:src="@{/layui/layui.all.js}"></script>
-    <script th:src="@{/modular/index.js}"></script>
+    <script th:src="@{/modular/door.js}"></script>
 </head>
 <body>
-<button type="button" class="layui-btn layui-btn-normal" id="ks" onclick="door.cl()">病房信息</button>
+<div style="text-align: center;align-items: center;">
+    <button type="button" class="layui-btn layui-btn-normal" id="bf">病房信息</button>
+</div>
 
 <table id="door" lay-filter="door"></table>
 

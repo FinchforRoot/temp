@@ -1,6 +1,8 @@
 package com.example.demo.Util;
 
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author root
@@ -24,4 +26,20 @@ public class DbUtil {
         return conn;
     }
 
+    public static Map operDB(String sql){
+        Map m = new HashMap();
+        Connection conn = DbUtil.getConnection();
+        PreparedStatement ptmt = null;
+        try {
+            ptmt = conn.prepareStatement(sql);
+            int i = ptmt.executeUpdate();
+            System.out.println(i);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            m.put("code", "303");
+            return m;
+        }
+        m.put("code","200");
+        return m;
+    }
 }

@@ -6,10 +6,12 @@
     <script th:src="@{/js/jquery.js}"></script>
     <link th:href="@{/layui/css/layui.css}" rel="stylesheet" type="text/css">
     <script th:src="@{/layui/layui.all.js}"></script>
-    <script th:src="@{/modular/index.js}"></script>
+    <script th:src="@{/modular/keshi.js}"></script>
 </head>
 <body>
-<button type="button" class="layui-btn layui-btn-normal" id="ks" onclick="keshi.cl()">科室信息</button>
+<div style="text-align: center;align-items: center;">
+    <button type="button" class="layui-btn layui-btn-normal" id="ks">科室信息</button>
+</div>
 
 <table id="keshi" lay-filter="keshi"></table>
 

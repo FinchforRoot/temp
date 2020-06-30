@@ -6,11 +6,12 @@
     <script th:src="@{/js/jquery.js}"></script>
     <link th:href="@{/layui/css/layui.css}" rel="stylesheet" type="text/css">
     <script th:src="@{/layui/layui.all.js}"></script>
-    <script th:src="@{/modular/index.js}"></script>
+    <script th:src="@{/modular/doctor.js}"></script>
 </head>
 <body>
-<button type="button" class="layui-btn layui-btn-normal" id="ks" onclick="doctor.cl()">医生信息</button>
-
+<div style="text-align: center;align-items: center;">
+<button type="button" class="layui-btn layui-btn-normal" id="ys">医生信息</button>
+</div>
 <table id="doctor" lay-filter="doctor"></table>
 
 </body>
