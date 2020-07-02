@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试</title>
+    <link rel="stylesheet" href="static/layui/css/layui.css">
+    <script src="static/js/jquery.js"></script>
+    <script src="static/layui/layui.js"></script>
+</head>
+<body>
+<div class="layui-container">
+    <div class="layui-tab layui-tab-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this">病人信息</li>
+            <li>医生信息</li>
+            <li>病房信息</li>
+            <li>科室信息</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div id="br" class="layui-tab-item layui-show"></div>
+            <div id="ys" class="layui-tab-item"></div>
+            <div id="bf" class="layui-tab-item"></div>
+            <div id="ks" class="layui-tab-item"></div>
+        </div>
+    </div>
+</div>
+<script>
+    function changeCheck(obj) {
+        if ($(obj).hasClass("layui-form-checked")) {
+            $(obj).removeClass("layui-form-checked");
+        } else {
+            $(obj).addClass("layui-form-checked");
+        }
+    }
+
+    var patient = {};
+    patient.insert = function () {
+        let id = $("#insertPatientId").val();
+        let record = $("#insertPatientRecord").val();
+        let name = $("#insertPatientName").val();
+        let gender = $("#insertPatientGender").val();
+        let age = $("#insertPatientAge").val();
+        let inhos_date = $("#insertPatientInhos_date").val();
+        let outhos_date = $("#insertPatientOuthos_date").val();
+        let doctorid = $("#insertPatientDoctorid").val();
+        let doorid = $("#insertPatientDoorid").val();
+        let data = {
+            "record": record,
+            "name": name,
+            "gender": gender,
+            "age": age,
+            "inhos_date": inhos_date,
+            "outhos_date": outhos_date,
+            "doctorid": doctorid,
+            "doorid": doorid
+        };
+        $.ajax({
+            type: "post",
+            url: "http://localhost:8081/patient/insert",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result.code === "200") {
+                    layer.msg("插入成功", {
+                        time: 1000, end: function () {
+                            window.parent.location.reload();
+                        }
+                    });
+                } else {
+                    layer.open({
+                        title:'插入失败'
+                        ,content:result.msg
+                    });
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                layer.msg("请求数据库异常");
+            }
+        })
+    };
+    patient.delete = function () {
+        let checkedItem = $("#patientTable .layui-form-checked");
+        if (checkedItem.length == 0) {
+            layer.msg("请选择一行进行删除");
+        } else if (checkedItem.length > 1) {
+            layer.msg("目前只支持删除一条记录");
+        } else {
+            let currentTr = checkedItem.parent().parent().parent();
+            let ths = currentTr.find($("th"));
+            let id = ths[1].innerHTML;
+            $.ajax({
+                type: "post",
+                url: "http://localhost:8081/patient/delete?id=" + id,
+                data: "",
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    if (result.code === "200") {
+                        layer.msg("删除成功", {
+                            time: 1000, end: function () {
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        layer.msg("删除失败");
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                    layer.msg("请求数据库异常");
+                }
+            })
+        }
+    };
+    patient.update = function () {
+        let id = $("#updatePatientId").val();
+        let record = $("#updatePatientRecord").val();
+        let name = $("#updatePatientName").val();
+        let gender = $("#updatePatientGender").val();
+        let age = $("#updatePatientAge").val();
+        let inhos_date = $("#updatePatientInhos_date").val();
+        let outhos_date = $("#updatePatientOuthos_date").val();
+        let doctorid = $("#updatePatientDoctorid").val();
+        let doorid = $("#updatePatientDoorid").val();
+        let data = {
+            "id": id,
+            "record": record,
+            "name": name,
+            "gender": gender,
+            "age": age,
+            "inhos_date": inhos_date,
+            "outhos_date": outhos_date,
+            "doctorid": doctorid,
+            "doorid": doorid
+        };
+        $.ajax({
+            type: "post",
+            url: "http://localhost:8081/patient/update",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result.code === "200") {
+                    layer.msg("更新成功", {
+                        time: 1000,
+                        end: function () {
+                            window.parent.location.reload();
+                        }
+                    });
+                } else {
+                    layer.open({
+                        title:'更新失败'
+                        ,content:result.msg
+                    });
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                layer.msg("请求数据库异常");
+            }
+        })
+    };
+    patient.openAddDialogue = function () {
+        layer.open({
+            type: 1,
+            title: '新增病人',
+            area: ['400px', '400px'],
+            content: "<label class='layui-form-label'>病历号</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertPatientRecord'></div>" +
+                "<label class='layui-form-label'>病人姓名</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertPatientName'></div>" +
+                "<label class='layui-form-label'>性别</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertPatientGender'></div>" +
+                "<label class='layui-form-label'>年龄</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertPatientAge'></div>" +
+                "<label class='layui-form-label'>住院时间</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertPatientInhos_date' placeholder='数据格式应为2000-01-01'></div>" +
+                "<label class='layui-form-label'>出院时间</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertPatientOuthos_date' placeholder='数据格式应为2000-01-01'></div>" +
+                "<label class='layui-form-label'>医生id</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertPatientDoctorid'></div>" +
+                "<label class='layui-form-label'>病房id</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertPatientDoorid'></div>" +
+                "<div style='align-items: center;text-align: center'><button style='margin-top: 10px' class='layui-btn layui-btn-normal' onclick='patient.insert()'>新增</button></div>",
+        });
+    };
+    patient.openUpdateDialogue = function () {
+        let checkedItem = $("#patientTable .layui-form-checked");
+        if (checkedItem.length == 0) {
+            layer.msg("至少选中一行");
+        } else if (checkedItem.length > 1) {
+            layer.msg("只能选择一行");
+        } else {
+            let currentTr = checkedItem.parent().parent().parent();
+            let ths = currentTr.find($("th"));
+            for (let i = 1; i < ths.length; i++) {
+                console.log(ths[i].innerHTML);
+            }
+            layer.open({
+                type: 1,
+                title: '更新病人',
+                area: ['400px', '400px'],
+                content: "<label class='layui-form-label'>病人id</label><div class='layui-input-block'><input type='text' class='layui-input' id='updatePatientId' disabled value='" + ths[1].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>病历号</label><div class='layui-input-block'><input type='text' class='layui-input' id='updatePatientRecord' value='" + ths[2].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>病人姓名</label><div class='layui-input-block'><input type='text' class='layui-input' id='updatePatientName' value='" + ths[3].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>性别</label><div class='layui-input-block'><input type='text' class='layui-input' id='updatePatientGender' value='" + ths[4].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>年龄</label><div class='layui-input-block'><input type='text' class='layui-input' id='updatePatientAge' value='" + ths[5].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>住院时间</label><div class='layui-input-block'><input type='text' class='layui-input' id='updatePatientInhos_date' value='" + ths[6].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>出院时间</label><div class='layui-input-block'><input type='text' class='layui-input' id='updatePatientOuthos_date' value='" + ths[7].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>医生id</label><div class='layui-input-block'><input type='text' class='layui-input' id='updatePatientDoctorid' value='" + ths[8].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>病房id</label><div class='layui-input-block'><input type='text' class='layui-input' id='updatePatientDoorid' value='" + ths[9].innerHTML + "'></div>" +
+                    "<div style='align-items: center;text-align: center'><button style='margin-top: 10px' class='layui-btn layui-btn-normal' onclick='patient.update()'>修改</button></div>",
+            });
+        }
+    };
+    var door = {};
+    door.insert = function () {
+        let roomnum = $("#insertDoorRoomnum").val();
+        let address = $("#insertDoorAddress").val();
+        let data = {
+            "roomnum": roomnum,
+            "address": address,
+        };
+        $.ajax({
+            type: "post",
+            url: "http://localhost:8081/door/insert",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result.code === "200") {
+                    layer.msg("插入成功", {
+                        time: 1000, end: function () {
+                            window.parent.location.reload();
+                        }
+                    });
+                } else {
+                    layer.open({
+                        title:'插入失败'
+                        ,content:result.msg
+                    });
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                layer.msg("请求数据库异常");
+            }
+        })
+    };
+    door.delete = function () {
+        let checkedItem = $("#doorTable .layui-form-checked");
+        if (checkedItem.length == 0) {
+            layer.msg("请选择一行进行删除");
+        } else if (checkedItem.length > 1) {
+            layer.msg("目前只支持删除一条记录");
+        } else {
+            let currentTr = checkedItem.parent().parent().parent();
+            let ths = currentTr.find($("th"));
+            let id = ths[1].innerHTML;
+            $.ajax({
+                type: "post",
+                url: "http://localhost:8081/door/delete?id=" + id,
+                data: "",
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    if (result.code === "200") {
+                        layer.msg("删除成功", {
+                            time: 1000, end: function () {
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        layer.msg("删除失败");
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                    layer.msg("请求数据库异常");
+                }
+            })
+        }
+    };
+    door.update = function () {
+        let id = $("#updateDoorId").val();
+        let roomnum = $("#updateDoorRoomnum").val();
+        let address = $("#updateDoorAddress").val();
+        let data = {
+            "id":id,
+            "roomnum": roomnum,
+            "address": address,
+        };
+        $.ajax({
+            type: "post",
+            url: "http://localhost:8081/door/update",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result.code === "200") {
+                    layer.msg("更新成功", {
+                        time: 1000,
+                        end: function () {
+                            window.parent.location.reload();
+                        }
+                    });
+                } else {
+                    layer.open({
+                        title:'更新失败'
+                        ,content:result.msg
+                    });
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                layer.msg("请求数据库异常");
+            }
+        })
+    };
+    door.openAddDialogue = function () {
+        layer.open({
+            type: 1,
+            title: '新增病房信息',
+            area: ['400px', '200px'],
+            content: "<label class='layui-form-label'>病房号</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertDoorRoomnum'></div>" +
+                "<label class='layui-form-label'>病房地址</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertDoorAddress'></div>" +
+                "<div style='align-items: center;text-align: center'><button style='margin-top: 10px' class='layui-btn layui-btn-normal' onclick='door.insert()'>新增</button></div>",
+        });
+    };
+    door.openUpdateDialogue = function () {
+        let checkedItem = $("#doorTable .layui-form-checked");
+        if (checkedItem.length == 0) {
+            layer.msg("至少选中一行");
+        } else if (checkedItem.length > 1) {
+            layer.msg("只能选择一行");
+        } else {
+            let currentTr = checkedItem.parent().parent().parent();
+            let ths = currentTr.find($("th"));
+            for (let i = 1; i < ths.length; i++) {
+                console.log(ths[i].innerHTML);
+            }
+            layer.open({
+                type: 1,
+                title: '更新病房信息',
+                area: ['400px', '220px'],
+                content: "<label class='layui-form-label'>病房id</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateDoorId' disabled value='" + ths[1].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>病房号</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateDoorRoomnum' value='" + ths[2].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>病房地址</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateDoorAddress' value='" + ths[3].innerHTML + "'></div>" +
+                    "<div style='align-items: center;text-align: center'><button style='margin-top: 10px' class='layui-btn layui-btn-normal' onclick='door.update()'>修改</button></div>",
+            });
+        }
+    };
+    var doctor = {};
+    doctor.insert = function () {
+        let idcard = $("#insertDoctorIdcard").val();
+        let name = $("#insertDoctorName").val();
+        let age = $("#insertDoctorAge").val();
+        let gender = $("#insertDoctorGender").val();
+        let rank = $("#insertDoctorRank").val();
+        let salary = $("#insertDoctorSalary").val();
+        let ksnum = $("#insertDoctorKsnum").val();
+        let data = {
+            "idcard": idcard,
+            "name": name,
+            "age": age,
+            "gender": gender,
+            "rank": rank,
+            "salary": salary,
+            "ksnum": ksnum
+        };
+        $.ajax({
+            type: "post",
+            url: "http://localhost:8081/doctor/insert",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result.code === "200") {
+                    layer.msg("插入成功", {
+                        time: 1000, end: function () {
+                            window.parent.location.reload();
+                        }
+                    });
+                } else {
+                    layer.open({
+                        title:'插入失败'
+                        ,content:result.msg
+                    });
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                layer.msg("请求数据库异常");
+            }
+        })
+    };
+    doctor.delete = function () {
+        let checkedItem = $("#doctorTable .layui-form-checked");
+        if (checkedItem.length == 0) {
+            layer.msg("请选择一行进行删除");
+        } else if (checkedItem.length > 1) {
+            layer.msg("目前只支持删除一条记录");
+        } else {
+            let currentTr = checkedItem.parent().parent().parent();
+            let ths = currentTr.find($("th"));
+            let id = ths[1].innerHTML;
+            $.ajax({
+                type: "post",
+                url: "http://localhost:8081/doctor/delete?id=" + id,
+                data: "",
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    if (result.code === "200") {
+                        layer.msg("删除成功", {
+                            time: 1000, end: function () {
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        layer.msg("删除失败");
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                    layer.msg("请求数据库异常");
+                }
+            })
+        }
+    };
+    doctor.update = function () {
+        let id = $("#updateDoctorId").val();
+        let idcard = $("#updateDoctorIdcard").val();
+        let name = $("#updateDoctorName").val();
+        let age = $("#updateDoctorAge").val();
+        let gender = $("#updateDoctorGender").val();
+        let rank = $("#updateDoctorRank").val();
+        let salary = $("#updateDoctorSalary").val();
+        let ksnum = $("#updateDoctorKsnum").val();
+        let data = {
+            "id":id,
+            "idcard": idcard,
+            "name": name,
+            "age": age,
+            "gender": gender,
+            "rank": rank,
+            "salary": salary,
+            "ksnum": ksnum
+        };
+        $.ajax({
+            type: "post",
+            url: "http://localhost:8081/doctor/update",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result.code === "200") {
+                    layer.msg("更新成功", {
+                        time: 1000,
+                        end: function () {
+                            window.parent.location.reload();
+                        }
+                    });
+                } else {
+                    layer.open({
+                        title:'更新失败'
+                        ,content:result.msg
+                    });
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                layer.msg("请求数据库异常");
+            }
+        })
+    };
+    doctor.openAddDialogue = function () {
+        layer.open({
+            type: 1,
+            title: '新增医生信息',
+            area: ['400px', '360px'],
+            content: "<label class='layui-form-label'>工作证号</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertDoctorIdcard'></div>" +
+                "<label class='layui-form-label'>姓名</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertDoctorName'></div>" +
+                "<label class='layui-form-label'>年龄</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertDoctorAge'></div>" +
+                "<label class='layui-form-label'>性别</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertDoctorGender'></div>" +
+                "<label class='layui-form-label'>职位</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertDoctorRank'></div>" +
+                "<label class='layui-form-label'>薪水</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertDoctorSalary'></div>" +
+                "<label class='layui-form-label'>科室编号</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertDoctorKsnum'></div>" +
+                "<div style='align-items: center;text-align: center'><button style='margin-top: 10px' class='layui-btn layui-btn-normal' onclick='doctor.insert()'>新增</button></div>",
+        });
+    };
+    doctor.openUpdateDialogue = function () {
+        let checkedItem = $("#doctorTable .layui-form-checked");
+        if (checkedItem.length == 0) {
+            layer.msg("至少选中一行");
+        } else if (checkedItem.length > 1) {
+            layer.msg("只能选择一行");
+        } else {
+            let currentTr = checkedItem.parent().parent().parent();
+            let ths = currentTr.find($("th"));
+            for (let i = 1; i < ths.length; i++) {
+                console.log(ths[i].innerHTML);
+            }
+            layer.open({
+                type: 1,
+                title: '更新医生信息',
+                area: ['400px', '400px'],
+                content: "<label class='layui-form-label'>医生id</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateDoctorId' disabled value='" + ths[1].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>工作证号</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateDoctorIdcard' value='" + ths[2].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>姓名</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateDoctorName' value='" + ths[3].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>年龄</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateDoctorAge' value='" + ths[4].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>性别</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateDoctorGender' value='" + ths[5].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>职位</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateDoctorRank' value='" + ths[6].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>薪水</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateDoctorSalary' value='" + ths[7].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>科室编号</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateDoctorKsnum' value='" + ths[8].innerHTML + "'></div>" +
+                    "<div style='align-items: center;text-align: center'><button style='margin-top: 10px' class='layui-btn layui-btn-normal' onclick='doctor.update()'>修改</button></div>",
+            });
+        }
+    };
+    var keshi = {};
+    keshi.insert = function () {
+        let ksnum = $("#insertKeshiKsnum").val();
+        let telephone = $("#insertKeshiTelephone").val();
+        let name = $("#insertKeshiName").val();
+        let address = $("#insertKeshiAddress").val();
+        let data = {
+            "ksnum": ksnum,
+            "telephone": telephone,
+            "name": name,
+            "address": address,
+        };
+        $.ajax({
+            type: "post",
+            url: "http://localhost:8081/keshi/insert",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result.code === "200") {
+                    layer.msg("插入成功", {
+                        time: 1000, end: function () {
+                            window.parent.location.reload();
+                        }
+                    });
+                } else {
+                    layer.open({
+                        title:'插入失败'
+                        ,content:result.msg
+                    });
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                layer.msg("请求数据库异常");
+            }
+        })
+    };
+    keshi.delete = function () {
+        let checkedItem = $("#keshiTable .layui-form-checked");
+        if (checkedItem.length == 0) {
+            layer.msg("请选择一行进行删除");
+        } else if (checkedItem.length > 1) {
+            layer.msg("目前只支持删除一条记录");
+        } else {
+            let currentTr = checkedItem.parent().parent().parent();
+            let ths = currentTr.find($("th"));
+            let id = ths[1].innerHTML;
+            $.ajax({
+                type: "post",
+                url: "http://localhost:8081/keshi/delete?id=" + id,
+                data: "",
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    if (result.code === "200") {
+                        layer.msg("删除成功", {
+                            time: 1000, end: function () {
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        layer.msg("删除失败");
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                    layer.msg("请求数据库异常");
+                }
+            })
+        }
+    };
+    keshi.update = function () {
+        let id = $("#updateKeshiId").val();
+        let ksnum = $("#updateKeshiKsnum").val();
+        let telephone = $("#updateKeshiTelephone").val();
+        let name = $("#updateKeshiName").val();
+        let address = $("#updateKeshiAddress").val();
+        let data = {
+            "id":id,
+            "ksnum": ksnum,
+            "telephone": telephone,
+            "name": name,
+            "address": address
+        };
+        $.ajax({
+            type: "post",
+            url: "http://localhost:8081/keshi/update",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result.code === "200") {
+                    layer.msg("更新成功", {
+                        time: 1000,
+                        end: function () {
+                            window.parent.location.reload();
+                        }
+                    });
+                } else {
+                    layer.open({
+                        title:'更新失败'
+                        ,content:result.msg
+                    });
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                layer.msg("请求数据库异常");
+            }
+        })
+    };
+    keshi.openAddDialogue = function () {
+        layer.open({
+            type: 1,
+            title: '新增科室信息',
+            area: ['400px', '260px'],
+            content: "<label class='layui-form-label'>科室编号</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertKeshiKsnum'></div>" +
+                "<label class='layui-form-label'>科室电话</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertKeshiTelephone'></div>" +
+                "<label class='layui-form-label'>科室名称</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertKeshiName'></div>" +
+                "<label class='layui-form-label'>科室地址</label><div class='layui-input-block'><input type='text' class='layui-input' id='insertKeshiAddress'></div>" +
+                "<div style='align-items: center;text-align: center'><button style='margin-top: 10px' class='layui-btn layui-btn-normal' onclick='keshi.insert()'>新增</button></div>",
+        });
+    };
+    keshi.openUpdateDialogue = function () {
+        let checkedItem = $("#keshiTable .layui-form-checked");
+        if (checkedItem.length == 0) {
+            layer.msg("至少选中一行");
+        } else if (checkedItem.length > 1) {
+            layer.msg("只能选择一行");
+        } else {
+            let currentTr = checkedItem.parent().parent().parent();
+            let ths = currentTr.find($("th"));
+            for (let i = 1; i < ths.length; i++) {
+                console.log(ths[i].innerHTML);
+            }
+            layer.open({
+                type: 1,
+                title: '更新医生信息',
+                area: ['400px', '300px'],
+                content: "<label class='layui-form-label'>科室id</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateKeshiId' disabled value='" + ths[1].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>科室编号</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateKeshiKsnum' value='" + ths[2].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>科室电话</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateKeshiTelephone' value='" + ths[3].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>科室名称</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateKeshiName' value='" + ths[4].innerHTML + "'></div>" +
+                    "<label class='layui-form-label'>科室地址</label><div class='layui-input-block'><input type='text' class='layui-input' id='updateKeshiAddress' value='" + ths[5].innerHTML + "'></div>" +
+                    "<div style='align-items: center;text-align: center'><button style='margin-top: 10px' class='layui-btn layui-btn-normal' onclick='keshi.update()'>修改</button></div>",
+            });
+        }
+    };
+    layui.use(['element', 'layer'], function () {
+        var element = layui.element;
+        var layer = layui.layer;
+        //…
+    });
+
+    $(function () {
+        let br = $("#br");
+        let ys = $("#ys");
+        let bf = $("#bf");
+        let ks = $("#ks");
+        $.ajax({
+            url: "http://localhost:8081/patient",
+            method: "get",
+            data: "",
+            contentType: "application/json; charset=utf-8"
+        }).then(res => {
+            let data = res.data;
+            let html = `<button class="layui-btn layui-btn-primary" id="add" onclick="patient.openAddDialogue()">增加</button><button class="layui-btn layui-btn-primary" id="update" onclick="patient.openUpdateDialogue()">修改</button><button class="layui-btn layui-btn-primary" id="delete" onclick="patient.delete()">删除</button>`;
+            html += `<table class="layui-table" id="patientTable">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>病人id</th>
+                                    <th>病历号</th>
+                                    <th>病人姓名</th>
+                                    <th>性别</th>
+                                    <th>年龄</th>
+                                    <th>住院时间</th>
+                                    <th>出院时间</th>
+                                    <th>医生id</th>
+                                    <th>病房id</th>
+                                </tr>
+                            </thead><tbody>`;
+            for (let i = 0; i < data.length; i++) {
+                html += "<tr><th><div class=\"layui-table-cell laytable-cell-1-0-0 laytable-cell-checkbox\"><div class=\"layui-unselect layui-form-checkbox\" lay-skin=\"primary\" onclick=\"changeCheck(this)\"><i class=\"layui-icon layui-icon-ok\"></i></div></div><th>" + data[i].id + "</th><th>" + data[i].record + "</th><th>" + data[i].name + "</th><th>" + data[i].gender + "</th><th>" + data[i].age + "</th><th>" + data[i].inhos_date + "</th><th>" + data[i].outhos_date + "</th><th>" + data[i].doctorid + "</th><th>" + data[i].doorid + "</th></tr>";
+            }
+            html += `</tbody></table>`;
+            br.empty();
+            br.append(html);
+        });
+
+        $.ajax({
+            url: "http://localhost:8081/doctor",
+            method: "get",
+            data: "",
+            contentType: "application/json; charset=utf-8"
+        }).then(res => {
+            let data = res.data;
+            let html = `<button class="layui-btn layui-btn-primary" onclick="doctor.openAddDialogue()">增加</button><button class="layui-btn layui-btn-primary" onclick="doctor.openUpdateDialogue()">修改</button><button class="layui-btn layui-btn-primary" onclick="doctor.delete()">删除</button>`;
+            html += `<table class="layui-table" id="doctorTable">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>医生id</th>
+                                    <th>工作证号</th>
+                                    <th>医生姓名</th>
+                                    <th>医生年龄</th>
+                                    <th>医生性别</th>
+                                    <th>医生职位</th>
+                                    <th>医生薪水</th>
+                                    <th>科室编号</th>
+                                </tr>
+                            </thead><tbody>`;
+            for (let i = 0; i < data.length; i++) {
+                html += "<tr><th><div class=\"layui-table-cell laytable-cell-1-0-0 laytable-cell-checkbox\"><div class=\"layui-unselect layui-form-checkbox\" lay-skin=\"primary\" onclick=\"changeCheck(this)\"><i class=\"layui-icon layui-icon-ok\"></i></div></div><th>" + data[i].id + "</th><th>" + data[i].idcard + "</th><th>" + data[i].name + "</th><th>" + data[i].age + "</th><th>" + data[i].gender + "</th><th>" + data[i].rank + "</th><th>" + data[i].salary + "</th><th>" + data[i].ksnum + "</th></tr>";
+            }
+            html += `</tbody></table>`;
+            ys.empty();
+            ys.append(html);
+        });
+
+        $.ajax({
+            url: "http://localhost:8081/door",
+            method: "get",
+            data: "",
+            contentType: "application/json; charset=utf-8"
+        }).then(res => {
+            let data = res.data;
+            let html = `<button class="layui-btn layui-btn-primary" onclick="door.openAddDialogue()">增加</button><button class="layui-btn layui-btn-primary" onclick="door.openUpdateDialogue()">修改</button><button class="layui-btn layui-btn-primary" onclick="door.delete()">删除</button>`;
+            html += `<table class="layui-table" id="doorTable">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>病房id</th>
+                                    <th>病房号</th>
+                                    <th>病房地址</th>
+                                </tr>
+                            </thead><tbody>`;
+            for (let i = 0; i < data.length; i++) {
+                html += "<tr><th><div class=\"layui-table-cell laytable-cell-1-0-0 laytable-cell-checkbox\"><div class=\"layui-unselect layui-form-checkbox\" lay-skin=\"primary\" onclick=\"changeCheck(this)\"><i class=\"layui-icon layui-icon-ok\"></i></div></div><th>" + data[i].id + "</th><th>" + data[i].roomnum + "</th><th>" + data[i].address + "</th></tr>";
+            }
+            html += `</tbody></table>`;
+            bf.empty();
+            bf.append(html);
+        });
+
+        $.ajax({
+            url: "http://localhost:8081/keshi",
+            method: "get",
+            data: "",
+            contentType: "application/json; charset=utf-8"
+        }).then(res => {
+            let data = res.data;
+            let html = `<button class="layui-btn layui-btn-primary" id="add" onclick="keshi.openAddDialogue()">增加</button><button class="layui-btn layui-btn-primary" id="update" onclick="keshi.openUpdateDialogue()">修改</button><button class="layui-btn layui-btn-primary" id="delete" onclick="keshi.delete()">删除</button>`;
+            html += `<table class="layui-table" id="keshiTable">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>科室id</th>
+                                    <th>科室编号</th>
+                                    <th>科室电话</th>
+                                    <th>科室名称</th>
+                                    <th>科室地址</th>
+                                </tr>
+                            </thead><tbody>`;
+            for (let i = 0; i < data.length; i++) {
+                html += "<tr><th><div class=\"layui-table-cell laytable-cell-1-0-0 laytable-cell-checkbox\"><div class=\"layui-unselect layui-form-checkbox\" lay-skin=\"primary\" onclick=\"changeCheck(this)\"><i class=\"layui-icon layui-icon-ok\"></i></div></div><th>" + data[i].id + "</th><th>" + data[i].ksnum + "</th><th>" + data[i].telephone + "</th><th>" + data[i].name + "</th><th>" + data[i].address + "</th></tr>";
+            }
+            html += `</tbody></table>`;
+            ks.empty();
+            ks.append(html);
+        })
+    })
+</script>
+</body>
+</html>
