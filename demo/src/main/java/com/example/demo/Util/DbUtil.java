@@ -37,6 +37,7 @@ public class DbUtil {
         } catch (SQLException e) {
             e.printStackTrace();
             m.put("code", "303");
+            m.put("msg",e.toString());
             return m;
         }
         m.put("code","200");

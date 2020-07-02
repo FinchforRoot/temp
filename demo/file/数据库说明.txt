@@ -1,0 +1,26 @@
+数据库建表顺序
+1.病房表
+2.科室表
+3.医生表
+4.病人表
+在新增数据的时候也是按照这个顺序
+
+sql语句见sql/hospital.sql
+
+数据库连接代码：
+src/main/java/com/example/demo/Util/DbUtil.java文件中的
+public static final String URL = "jdbc:mysql://localhost:3306/hospital?serverTimezone=UTC";
+public static final String USER = "root";
+public static final String PASSWORD = "root";
+分别对应连接数据库的名称  数据库的用户名  数据库的密码
+public static Connection getConnection(){
+        Connection conn = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return conn;
+    }
+    这段代码表示连接mysql数据库并且返回一个连接成功的对象，通过这个对象就可以操作数据库进行数据的insert delete update

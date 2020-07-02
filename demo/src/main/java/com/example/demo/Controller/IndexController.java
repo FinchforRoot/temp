@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +70,13 @@ public class IndexController {
         return m;
     }
 
+    @PostMapping("/keshi/insert")
+    @ResponseBody
+    public Map keshiInsert(@RequestBody Keshi keshi){
+        String sql = "insert into keshi(ksnum,telephone,name,address) VALUES ('"+keshi.getKsnum()+"','"+keshi.getTelephone()+"','"+keshi.getName()+"','"+keshi.getAddress()+"');";
+        return DbUtil.operDB(sql);
+    }
+
     @PostMapping("/keshi/update")
     @ResponseBody
     public Map keshiUpdate(@RequestBody Keshi keshi) {
@@ -110,6 +118,13 @@ public class IndexController {
         return m;
     }
 
+    @PostMapping("/doctor/insert")
+    @ResponseBody
+    public Map doctorInsert(@RequestBody Doctor doctor){
+        String sql = "insert into doctor(idcard,name,age,gender,rank,salary,ksnum) VALUES ('"+doctor.getIdcard()+"','"+doctor.getName()+"','"+doctor.getAge()+"','"+doctor.getGender()+"','"+doctor.getRank()+"','"+doctor.getSalary()+"','"+doctor.getKsnum()+"');";
+        return DbUtil.operDB(sql);
+    }
+
     @PostMapping("/doctor/update")
     @ResponseBody
     public Map doctorUpdate(@RequestBody Doctor doctor) {
@@ -143,6 +158,13 @@ public class IndexController {
         m.put("code", 0);
         m.put("data", lists);
         return m;
+    }
+
+    @PostMapping("/door/insert")
+    @ResponseBody
+    public Map doorInsert(@RequestBody Door door){
+        String sql = "insert into door(roomnum,address) VALUES ('"+door.getRoomnum()+"','"+door.getAddress()+"');";
+        return DbUtil.operDB(sql);
     }
 
     @PostMapping("/door/update")
@@ -186,10 +208,17 @@ public class IndexController {
         return m;
     }
 
+    @PostMapping("/patient/insert")
+    @ResponseBody
+    public Map patientInsert(@RequestBody Patient patient){
+        String sql = "insert into patient(record,name,gender,age,inhos_date,outhos_date,doctorid,doorid) VALUES ('"+patient.getRecord()+"','"+patient.getName()+"','"+patient.getGender()+"','"+patient.getAge()+"','"+new SimpleDateFormat("yyyy-MM-dd").format(patient.getInhos_date())+"','"+new SimpleDateFormat("yyyy-MM-dd").format(patient.getOuthos_date())+"','"+patient.getDoctorid()+"','"+patient.getDoorid()+"');";
+        return DbUtil.operDB(sql);
+    }
+
     @PostMapping("/patient/update")
     @ResponseBody
     public Map patientUpdate(@RequestBody Patient patient) {
-        String sql = "update patient set record = '" + String.valueOf(patient.getRecord()) + "',name = '" + String.valueOf(patient.getName()) + "',gender = '"+String.valueOf(patient.getGender())+"',age = '"+String.valueOf(patient.getAge())+"',inhos_date = '"+String.valueOf(patient.getInhos_date())+"',outhos_date = '"+String.valueOf(patient.getOuthos_date())+"',doctorid = '"+String.valueOf(patient.getDoctorid())+"',doorid = '"+String.valueOf(patient.getDoorid())+"' where id = '" + String.valueOf(patient.getId()) + "';";
+        String sql = "update patient set record = '" + patient.getRecord() + "',name = '" + patient.getName() + "',gender = '"+patient.getGender()+"',age = '"+patient.getAge()+"',inhos_date = '"+new SimpleDateFormat("yyyy-MM-dd").format(patient.getInhos_date())+"',outhos_date = '"+new SimpleDateFormat("yyyy-MM-dd").format(patient.getOuthos_date())+"',doctorid = '"+patient.getDoctorid()+"',doorid = '"+patient.getDoorid()+"' where id = '" + patient.getId() + "';";
         return DbUtil.operDB(sql);
     }
 
